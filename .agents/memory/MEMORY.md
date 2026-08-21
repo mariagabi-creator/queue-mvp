@@ -1,0 +1,1 @@
+- [Orval Zod compatibility](orval-zod-version.md) — keep generated validation syntax aligned with the workspace's installed Zod major version.

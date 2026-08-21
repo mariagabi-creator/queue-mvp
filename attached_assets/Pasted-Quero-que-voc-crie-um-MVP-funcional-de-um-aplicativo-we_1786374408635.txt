@@ -1,0 +1,334 @@
+Quero que você crie um MVP funcional de um aplicativo web chamado QUEUE.
+
+CONTEXTO DO PROJETO
+
+O Queue é uma plataforma de fila virtual para estabelecimentos que possuem filas presenciais, como restaurantes, salões, barbearias, clínicas e outros locais de atendimento.
+
+O problema que queremos resolver é simples:
+
+Hoje, quando uma pessoa entra em uma fila presencial, muitas vezes precisa permanecer no estabelecimento ou perto dele sem saber exatamente quanto tempo falta para ser atendida.
+
+O Queue permite que essa pessoa entre em uma fila virtual pelo celular, veja sua posição e uma estimativa de espera e acompanhe a fila sem precisar ficar fisicamente parada no local.
+
+Ao mesmo tempo, o estabelecimento terá um painel simples para administrar essa fila.
+
+Este é um MVP acadêmico. Não quero um sistema excessivamente complexo. Quero um produto simples, bonito, funcional e demonstrável.
+
+-----------------------------------
+
+TIPOS DE USUÁRIO
+
+Existem dois lados:
+
+1. CLIENTE
+Pessoa que está esperando para ser atendida.
+
+2. ESTABELECIMENTO
+Responsável por administrar a fila e chamar os clientes.
+
+-----------------------------------
+
+FLUXO DO CLIENTE
+
+Quero que o cliente consiga:
+
+1. Acessar a página do estabelecimento.
+
+2. Ver informações básicas da fila, como:
+- quantidade de pessoas esperando;
+- estimativa aproximada de espera.
+
+3. Clicar em "Entrar na fila".
+
+4. Informar seu nome.
+
+5. Confirmar sua entrada.
+
+6. Depois de entrar, visualizar uma tela de acompanhamento mostrando com bastante destaque:
+
+"Você é o 4º da fila"
+
+"3 pessoas na sua frente"
+
+"Tempo estimado: aproximadamente 20 minutos"
+
+7. Essa posição deve mudar quando o estabelecimento atender outras pessoas.
+
+8. O cliente também deve conseguir sair da fila.
+
+-----------------------------------
+
+FLUXO DO ESTABELECIMENTO
+
+Crie um painel separado para o estabelecimento.
+
+O estabelecimento deve conseguir:
+
+1. Abrir uma fila.
+
+2. Visualizar os clientes em ordem de chegada.
+
+Exemplo:
+
+1. Maria — aguardando
+2. Daniella — aguardando
+3. João — aguardando
+
+3. Visualizar:
+- quantidade de pessoas aguardando;
+- horário em que cada pessoa entrou;
+- tempo aproximado de espera.
+
+4. Clicar em "Chamar próximo".
+
+5. Marcar o cliente como atendido.
+
+6. Remover uma pessoa da fila se necessário.
+
+Quando o primeiro cliente for atendido, todos os demais devem avançar automaticamente uma posição.
+
+Exemplo:
+
+Antes:
+
+1. Maria
+2. Daniella
+3. João
+
+Maria é atendida.
+
+Depois:
+
+1. Daniella
+2. João
+
+A tela dos clientes deve refletir essa alteração.
+
+-----------------------------------
+
+FUNCIONALIDADES OBRIGATÓRIAS — P0
+
+Priorize estas funcionalidades antes de qualquer outra:
+
+- Criar/abrir uma fila.
+- Cliente entrar na fila.
+- Cliente visualizar sua posição.
+- Mostrar quantas pessoas estão à frente.
+- Mostrar estimativa de espera.
+- Painel do estabelecimento.
+- Visualizar clientes em ordem.
+- Chamar próximo cliente.
+- Marcar cliente como atendido.
+- Atualizar a posição dos demais clientes.
+- Cliente sair da fila.
+- Persistir os dados para que atualizar a página não destrua a fila.
+
+-----------------------------------
+
+FUNCIONALIDADES P1
+
+Somente implemente depois que todo o fluxo P0 estiver funcionando:
+
+- QR Code que leva diretamente para a fila.
+- Aviso visual quando estiver chegando a vez do cliente.
+- Histórico básico de atendimentos.
+- Tempo médio de atendimento.
+
+Não deixe funcionalidades P1 prejudicarem o funcionamento do MVP.
+
+-----------------------------------
+
+O QUE NÃO FAZER
+
+Não transforme o Queue em um aplicativo enorme.
+
+Nesta versão NÃO precisamos de:
+
+- pagamentos;
+- reservas antecipadas;
+- avaliações;
+- marketplace;
+- chat;
+- rede social;
+- delivery;
+- sistema financeiro;
+- sistema completo de gestão empresarial.
+
+O objetivo é FILA VIRTUAL.
+
+-----------------------------------
+
+DESIGN
+
+Quero um design moderno, minimalista e profissional.
+
+O aplicativo deve parecer um produto real e não apenas um projeto acadêmico.
+
+Priorize experiência MOBILE FIRST.
+
+Quero:
+
+- interface limpa;
+- poucos elementos por tela;
+- bastante espaço em branco;
+- tipografia moderna;
+- cards;
+- botões grandes;
+- cantos arredondados;
+- navegação extremamente simples;
+- excelente hierarquia visual.
+
+Na tela do cliente, a POSIÇÃO NA FILA deve ser a informação visual mais importante.
+
+Por exemplo:
+
+QUEUE
+
+Restaurante Example
+
+SUA POSIÇÃO
+
+4º
+
+3 pessoas na sua frente
+
+~20 min de espera
+
+[ SAIR DA FILA ]
+
+Crie uma identidade visual simples e elegante para a marca Queue.
+
+-----------------------------------
+
+TELAS MÍNIMAS
+
+Quero pelo menos:
+
+1. Landing page / tela inicial do Queue.
+
+2. Página do estabelecimento.
+
+3. Tela para entrar na fila.
+
+4. Tela do cliente acompanhando sua posição.
+
+5. Estado visual de "Sua vez está chegando".
+
+6. Estado visual de "É a sua vez".
+
+7. Dashboard do estabelecimento.
+
+-----------------------------------
+
+TECNOLOGIA
+
+Preferencialmente utilize:
+
+- TypeScript
+- React
+- Vite
+- PostgreSQL
+
+Mas você pode adaptar a arquitetura caso exista uma solução mais adequada dentro do Replit.
+
+A prioridade é ter um MVP funcional e estável.
+
+-----------------------------------
+
+BANCO DE DADOS
+
+Os dados da fila devem persistir.
+
+Modele pelo menos:
+
+ESTABELECIMENTO
+- id
+- nome
+
+FILA
+- id
+- estabelecimento
+- status
+- data/hora
+
+CLIENTE NA FILA
+- id
+- nome
+- posição
+- horário de entrada
+- status
+
+Status possíveis:
+
+- aguardando
+- chamado
+- atendido
+- saiu
+
+-----------------------------------
+
+ESTIMATIVA DE TEMPO
+
+Para o MVP, pode utilizar uma lógica simples.
+
+Exemplo:
+
+tempo médio estimado por pessoa = 5 minutos.
+
+Se existem 3 pessoas na frente:
+
+tempo estimado = aproximadamente 15 minutos.
+
+Deixe essa lógica organizada para que possa ser melhorada posteriormente.
+
+-----------------------------------
+
+TESTE O PRODUTO
+
+Depois de construir, teste obrigatoriamente este cenário:
+
+1. O estabelecimento abre uma fila.
+
+2. Maria entra na fila.
+
+3. Daniella entra depois.
+
+4. Maria aparece em primeiro.
+
+5. Daniella aparece em segundo.
+
+6. O estabelecimento chama Maria.
+
+7. Maria é marcada como atendida.
+
+8. Daniella automaticamente passa para primeiro lugar.
+
+9. A tela de Daniella mostra a nova posição.
+
+10. Atualizar a página não deve apagar a fila.
+
+Se alguma dessas etapas não funcionar, corrija antes de considerar o MVP pronto.
+
+-----------------------------------
+
+IMPORTANTE
+
+Não quero apenas um protótipo visual.
+
+Quero que você CONSTRUA O APLICATIVO FUNCIONAL.
+
+Este projeto será apresentado academicamente em um Demo Day.
+
+A prioridade é:
+
+1. fluxo principal funcionando;
+2. banco de dados funcionando;
+3. experiência simples;
+4. boa aparência;
+5. código organizado.
+
+Comece planejando a arquitetura necessária e depois construa o MVP.
+
+Evite adicionar funcionalidades que não foram solicitadas.
+
+Ao terminar, explique brevemente o que foi implementado e como posso testar o fluxo completo do cliente e do estabelecimento.

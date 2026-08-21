@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Queue"
+description = "MVP de fila virtual para clientes acompanharem sua posição e estabelecimentos administrarem atendimentos em tempo real."
+version = "1.0.0"
+id = "artifacts/queue"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22850
+
+[services.development]
+run = "pnpm --filter @workspace/queue run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/queue", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/queue/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22850"
+BASE_PATH = "/"

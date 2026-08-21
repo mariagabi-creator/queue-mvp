@@ -1,0 +1,355 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: queues
+    description: Queue and customer operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /queues:
+    get:
+      operationId: listQueues
+      tags: [queues]
+      summary: List active queues
+      responses:
+        "200":
+          description: Active queues
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Queue"
+    post:
+      operationId: createQueue
+      tags: [queues]
+      summary: Open a queue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QueueInput"
+      responses:
+        "201":
+          description: Queue created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Queue"
+  /queues/{queueId}:
+    get:
+      operationId: getQueue
+      tags: [queues]
+      summary: Get queue details
+      parameters:
+        - $ref: "#/components/parameters/QueueId"
+      responses:
+        "200":
+          description: Queue details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Queue"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /queues/{queueId}/entries:
+    get:
+      operationId: listQueueEntries
+      tags: [queues]
+      summary: List current queue entries
+      parameters:
+        - $ref: "#/components/parameters/QueueId"
+      responses:
+        "200":
+          description: Queue entries in arrival order
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QueueEntry"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      operationId: joinQueue
+      tags: [queues]
+      summary: Join a queue
+      parameters:
+        - $ref: "#/components/parameters/QueueId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QueueEntryInput"
+      responses:
+        "201":
+          description: Queue entry created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueEntry"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /queues/{queueId}/entries/{entryId}:
+    get:
+      operationId: getQueueEntry
+      tags: [queues]
+      summary: Get a customer's current queue position
+      parameters:
+        - $ref: "#/components/parameters/QueueId"
+        - $ref: "#/components/parameters/EntryId"
+      responses:
+        "200":
+          description: Queue entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueEntry"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: leaveQueue
+      tags: [queues]
+      summary: Leave a queue
+      parameters:
+        - $ref: "#/components/parameters/QueueId"
+        - $ref: "#/components/parameters/EntryId"
+      responses:
+        "204":
+          description: Entry removed from the active queue
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /queues/{queueId}/entries/{entryId}/serve:
+    post:
+      operationId: serveQueueEntry
+      tags: [queues]
+      summary: Mark a customer as served
+      parameters:
+        - $ref: "#/components/parameters/QueueId"
+        - $ref: "#/components/parameters/EntryId"
+      responses:
+        "200":
+          description: Served queue entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueEntry"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /queues/{queueId}/next:
+    post:
+      operationId: callNextQueueEntry
+      tags: [queues]
+      summary: Call the next customer
+      parameters:
+        - $ref: "#/components/parameters/QueueId"
+      responses:
+        "200":
+          description: Called queue entry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueEntry"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: No customers are waiting
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /queues/{queueId}/summary:
+    get:
+      operationId: getQueueSummary
+      tags: [queues]
+      summary: Get dashboard queue summary
+      parameters:
+        - $ref: "#/components/parameters/QueueId"
+      responses:
+        "200":
+          description: Queue summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueSummary"
+        "404":
+          $ref: "#/components/responses/NotFound"
+components:
+  parameters:
+    QueueId:
+      name: queueId
+      in: path
+      required: true
+      schema:
+        type: integer
+    EntryId:
+      name: entryId
+      in: path
+      required: true
+      schema:
+        type: integer
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+    Queue:
+      type: object
+      properties:
+        id:
+          type: integer
+        establishmentName:
+          type: string
+        status:
+          type: string
+          enum: [open, closed]
+        averageMinutes:
+          type: integer
+        waitingCount:
+          type: integer
+        estimatedMinutes:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - establishmentName
+        - status
+        - averageMinutes
+        - waitingCount
+        - estimatedMinutes
+        - createdAt
+    QueueInput:
+      type: object
+      properties:
+        establishmentName:
+          type: string
+          minLength: 1
+        averageMinutes:
+          type: integer
+          minimum: 1
+          maximum: 60
+      required:
+        - establishmentName
+    QueueEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        queueId:
+          type: integer
+        name:
+          type: string
+        position:
+          type: integer
+        peopleAhead:
+          type: integer
+        estimatedMinutes:
+          type: integer
+        joinedAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [waiting, called, served, left]
+      required:
+        - id
+        - queueId
+        - name
+        - position
+        - peopleAhead
+        - estimatedMinutes
+        - joinedAt
+        - status
+    QueueEntryInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+      required:
+        - name
+    QueueSummary:
+      type: object
+      properties:
+        queue:
+          $ref: "#/components/schemas/Queue"
+        waiting:
+          type: integer
+        called:
+          type: integer
+        servedToday:
+          type: integer
+        averageWaitMinutes:
+          type: integer
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueueActivity"
+      required:
+        - queue
+        - waiting
+        - called
+        - servedToday
+        - averageWaitMinutes
+        - recentActivity
+    QueueActivity:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        status:
+          type: string
+          enum: [waiting, called, served, left]
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - status
+        - timestamp
+
